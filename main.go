@@ -14,12 +14,12 @@ func main() {
 	boolT := types.Typ[types.Bool]
 
 	// 合成タイプ
-	sliceInt := types.NewSlice(intT)                   // []int
-	arrayInt := types.NewArray(intT, 3)                // [3]int
-	arraySliceInt := types.NewArray(sliceInt, 3)       // [3][]int
-	mapStrInt := types.NewMap(strT, intT)              // map[string]int
-	ptrInt := types.NewPointer(intT)                   // *int
-	chInt := types.NewChan(types.SendRecv, intT)       // chan int
+	sliceInt := types.NewSlice(intT)                             // []int
+	arrayInt := types.NewArray(intT, 3)                          // [3]int
+	arraySliceInt := types.NewArray(sliceInt, 3)                 // [3][]int
+	mapStrInt := types.NewMap(strT, intT)                        // map[string]int
+	ptrInt := types.NewPointer(intT)                             // *int
+	chInt := types.NewChan(types.SendRecv, intT)                 // chan int
 	fn := types.NewSignatureType(nil, nil, nil, nil, nil, false) // func()
 
 	// 構造体: フィールドすべて比較可能なら構造体も比較可能
@@ -29,6 +29,13 @@ func main() {
 
 	fieldB2 := types.NewVar(token.NoPos, nil, "b", types.NewSlice(types.Typ[types.Byte]))
 	structNG := types.NewStruct([]*types.Var{fieldA, fieldB2}, []string{"", ""}) // []byte があるので不可
+
+	// 自己参照構造体（ポインタ経由なので比較可能）
+	nodeName := types.NewTypeName(token.NoPos, nil, "Node", nil)
+	node := types.NewNamed(nodeName, nil, nil)
+	nextField := types.NewVar(token.NoPos, nil, "next", types.NewPointer(node))
+	nodeStruct := types.NewStruct([]*types.Var{nextField}, []string{""})
+	node.SetUnderlying(nodeStruct)
 
 	// 空インターフェース（= any）
 	iface := types.NewInterfaceType(nil, nil)
@@ -52,6 +59,7 @@ func main() {
 		{"func()", fn},
 		{"struct{a int; b string}", structOK},
 		{"struct{a int; b []byte}", structNG},
+		{"type Node struct { next *Node }", node},
 		{"interface{}", iface},
 	}
 
