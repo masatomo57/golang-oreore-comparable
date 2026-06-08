@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Go ビルド成果物
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 各モジュールを `go build` した際に生成されるバイナリ
+# （ディレクトリ名と同名の実行ファイル）
+/comparable/comparable
+/ecdsa/ecdsa
+/embedding/embedding
+/generics/generics
+/music/music
+/option/option
+/reflect-json-schema/reflect-json-schema
+/wav/wav
+/google/jsonschema-go/jsonschema-go
+
+# テストバイナリ・カバレッジ
+*.test
+*.out
+coverage.txt
+
+# 音声・バイナリ出力物
+*.bin
+*.wav
+
+# Go workspace
+go.work
+go.work.sum
